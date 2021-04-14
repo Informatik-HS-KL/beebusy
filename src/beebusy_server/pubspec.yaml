@@ -1,0 +1,19 @@
+name: beebusy_server
+description: An empty Aqueduct application.
+version: 0.0.1
+author: stable|kernel <jobs@stablekernel.com>
+
+environment:
+  sdk: ">=2.0.0 <3.0.0"
+
+dependencies:
+  aqueduct: ^4.0.0-b1
+
+dev_dependencies:
+  test: ^1.0.0
+  aqueduct_test: ^2.0.0-b1 
+
+dependency_overrides:
+  # to fix issue with null safety
+  isolate_executor:
+    git: https://github.com/dakr0013/dart-isolate-executor.git

@@ -1,0 +1,506 @@
+---
+swagger: 2.0
+info:
+  description: This is a simple API
+  version: 1.0.0
+  title: Simple Inventory API
+  contact:
+    email: you@your-company.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+host: virtserver.swaggerhub.com
+basePath: /dakr0013/beebusy/1.0.0
+tags:
+- name: users
+  description: Operations concerning users, login and register
+- name: projects
+  description: Operations concerning projects
+- name: tasks
+  description: Operations concerning tasks
+schemes:
+- https
+paths:
+  /login:
+    get:
+      tags:
+      - users
+      summary: login with a email
+      operationId: login
+      parameters:
+      - in: body
+        name: user
+        description: User to create
+        required: false
+        schema:
+          type: object
+          properties:
+            email:
+              type: string
+              example: max@test.de
+      responses:
+        "200":
+          description: logged in successful
+          schema:
+            $ref: '#/definitions/User'
+        "404":
+          description: user not found
+  /register:
+    post:
+      tags:
+      - users
+      summary: Register a new user
+      operationId: register
+      consumes:
+      - application/json
+      parameters:
+      - in: body
+        name: user
+        description: User to create
+        required: false
+        schema:
+          $ref: '#/definitions/CreateUser'
+      responses:
+        "201":
+          description: user created
+        "409":
+          description: user already exists
+  /users:
+    get:
+      tags:
+      - users
+      summary: Get all users
+      operationId: allUsers
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        "200":
+          description: all users
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/User'
+  /users/{id}/projects:
+    get:
+      tags:
+      - projects
+      summary: Get all projects a user is member in
+      operationId: projectsForUser
+      produces:
+      - application/json
+      parameters:
+      - name: id
+        in: path
+        description: ID of the user
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: projects for a user
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Project'
+  /projects/{id}/tasks:
+    get:
+      tags:
+      - tasks
+      summary: Get all tasks for a project
+      operationId: tasksForProject
+      produces:
+      - application/json
+      parameters:
+      - name: id
+        in: path
+        description: ID of the project
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: tasks for a project
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Task'
+    post:
+      tags:
+      - tasks
+      summary: Create a new task
+      operationId: createTask
+      consumes:
+      - application/json
+      parameters:
+      - name: id
+        in: path
+        description: ID of the project
+        required: true
+        type: integer
+      - in: body
+        name: task
+        description: Task to create
+        required: false
+        schema:
+          $ref: '#/definitions/CreateTask'
+      responses:
+        "201":
+          description: task created
+  /tasks/{id}:
+    put:
+      tags:
+      - tasks
+      summary: Update task
+      operationId: updateTask
+      consumes:
+      - application/json
+      parameters:
+      - name: id
+        in: path
+        description: ID of the task
+        required: true
+        type: integer
+      - in: body
+        name: task
+        description: Task to create
+        required: false
+        schema:
+          $ref: '#/definitions/UpdateTask'
+      responses:
+        "200":
+          description: task updated
+    delete:
+      tags:
+      - tasks
+      summary: Delete Task
+      operationId: deleteTask
+      parameters:
+      - name: id
+        in: path
+        description: ID of the task
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: task deleted
+  /projects:
+    post:
+      tags:
+      - projects
+      summary: Create a new project
+      operationId: createProject
+      consumes:
+      - application/json
+      parameters:
+      - in: body
+        name: project
+        description: Project to create
+        required: false
+        schema:
+          $ref: '#/definitions/CreateProject'
+      responses:
+        "201":
+          description: project created
+  /projects/{id}:
+    get:
+      tags:
+      - projects
+      summary: Get one project
+      operationId: oneProject
+      produces:
+      - application/json
+      parameters:
+      - name: id
+        in: path
+        description: ID of the project
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: the project
+          schema:
+            $ref: '#/definitions/SingleProject'
+    put:
+      tags:
+      - projects
+      summary: Update a project
+      operationId: updateProject
+      consumes:
+      - application/json
+      parameters:
+      - name: id
+        in: path
+        description: ID of the project to update
+        required: true
+        type: integer
+      - in: body
+        name: project
+        description: updated project
+        required: false
+        schema:
+          $ref: '#/definitions/UpdateProject'
+      responses:
+        "200":
+          description: project updated
+    delete:
+      tags:
+      - projects
+      summary: Delete project
+      operationId: deleteProject
+      parameters:
+      - name: id
+        in: path
+        description: ID of the project to delete
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: project deleted
+  /projects/{id}/members:
+    get:
+      tags:
+      - projects
+      summary: Get all project members
+      operationId: projectMembers
+      produces:
+      - application/json
+      parameters:
+      - name: id
+        in: path
+        description: ID of the project
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: members of project
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/User'
+  /projects/{id}/members/{uid}:
+    post:
+      tags:
+      - projects
+      summary: Add member to project
+      operationId: addProjectMembers
+      consumes:
+      - application/json
+      parameters:
+      - name: id
+        in: path
+        description: ID of the project
+        required: true
+        type: integer
+      - name: uid
+        in: path
+        description: ID of the member
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: member added
+    delete:
+      tags:
+      - projects
+      summary: Remove member from project
+      operationId: deleteProjectMembers
+      consumes:
+      - application/json
+      parameters:
+      - name: id
+        in: path
+        description: ID of the project
+        required: true
+        type: integer
+      - name: uid
+        in: path
+        description: ID of the member
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: member removed
+  /tasks/{id}/assignees/{uid}:
+    post:
+      tags:
+      - tasks
+      summary: Add assignee to task
+      operationId: addTaskAssignee
+      parameters:
+      - name: id
+        in: path
+        description: ID of the project
+        required: true
+        type: integer
+      - name: uid
+        in: path
+        description: ID of the assignee
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: assignee added
+    delete:
+      tags:
+      - tasks
+      summary: Remove assignee from task
+      operationId: deleteTaskAssignee
+      parameters:
+      - name: id
+        in: path
+        description: ID of the project
+        required: true
+        type: integer
+      - name: uid
+        in: path
+        description: ID of the assignee
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: assignee removed
+definitions:
+  User:
+    type: object
+    required:
+    - email
+    - firstname
+    - lastname
+    properties:
+      uid:
+        type: integer
+        example: 1
+      email:
+        type: string
+        example: max@test.de
+      firstname:
+        type: string
+        example: Max
+      lastname:
+        type: string
+        example: Mustermann
+  CreateUser:
+    type: object
+    required:
+    - email
+    - firstname
+    - lastname
+    properties:
+      email:
+        type: string
+        example: max@test.de
+      firstname:
+        type: string
+        example: Max
+      lastname:
+        type: string
+        example: Mustermann
+  Project:
+    type: object
+    required:
+    - name
+    properties:
+      id:
+        type: integer
+        example: 1
+      name:
+        type: string
+        example: BeeBusy App
+      is_archived:
+        type: boolean
+        example: false
+  SingleProject:
+    type: object
+    required:
+    - name
+    properties:
+      id:
+        type: integer
+        example: 1
+      name:
+        type: string
+        example: BeeBusy App
+      is_archived:
+        type: boolean
+        example: false
+      members:
+        type: array
+        items:
+          $ref: '#/definitions/User'
+  UpdateProject:
+    type: object
+    properties:
+      name:
+        type: string
+        example: BeeBusy App
+      is_archived:
+        type: boolean
+        example: false
+  CreateProject:
+    type: object
+    required:
+    - name
+    properties:
+      name:
+        type: string
+        example: BeeBusy App
+      members:
+        type: array
+        items:
+          type: integer
+  Task:
+    required:
+    - title
+    properties:
+      id:
+        type: integer
+        example: 1
+      title:
+        type: string
+        example: Create DB
+      description:
+        type: string
+        example: Create mysql DB for users
+      deadline:
+        type: string
+        format: date-time
+        example: 2018-03-20T09:12:28Z
+      created:
+        type: string
+        format: date-time
+        example: 2018-03-19T09:12:28Z
+      status:
+        type: string
+        example: todo
+      assignees:
+        type: array
+        items:
+          $ref: '#/definitions/User'
+  CreateTask:
+    required:
+    - title
+    properties:
+      title:
+        type: string
+        example: Create DB
+      description:
+        type: string
+        example: Create mysql DB for users
+      deadline:
+        type: string
+        format: date-time
+        example: 2018-03-20T09:12:28Z
+  UpdateTask:
+    properties:
+      title:
+        type: string
+        example: Create DB
+      description:
+        type: string
+        example: Create mysql DB for users
+      deadline:
+        type: string
+        format: date-time
+        example: 2018-03-20T09:12:28Z
+      status:
+        type: string
+        example: in_progress

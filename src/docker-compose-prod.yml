@@ -1,0 +1,48 @@
+version: '3.1'
+
+services:
+
+    db:
+        container_name: beebusy_db
+        image: postgres
+        restart: always
+        volumes:
+            - ./db/datadir-prod:/var/lib/postgresql/data
+            - ./db/entrypoint:/docker-entrypoint-initdb.d/
+        environment:
+            POSTGRES_PASSWORD: 123
+    
+    server:
+        container_name: beebusy_server
+        restart: always
+        build: ./beebusy_server
+        image: beebusy_server
+        depends_on: 
+            - db
+        environment:
+            DB_HOST: db
+            DB_PORT: 5432
+            DB_USER: postgres
+            DB_PW: 123
+            DB_NAME: postgres
+        ports: 
+            - 3031:80
+            #- 8888:80
+
+    webapp:
+        container_name: beebusy_webapp
+        restart: always
+        build: ./beebusy_app
+        image: beebusy_app
+        depends_on: 
+            - server
+        environment:
+            API_HOST: 10.0.3.10
+            API_PORT: 3031
+            #API_HOST: localhost
+            #API_PORT: 8888
+        ports:
+            - 3030:80
+            #- 80:80
+
+        
